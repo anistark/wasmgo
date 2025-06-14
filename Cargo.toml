@@ -8,7 +8,7 @@ homepage = "https://github.com/anistark/chakra-go"
 repository = "https://github.com/anistark/chakra-go"
 license = "MIT"
 keywords = ["webassembly", "wasm", "go", "tinygo", "chakra"]
-categories = ["development-tools", "web-programming", "plugins"]
+categories = ["development-tools", "web-programming"]
 readme = "README.md"
 
 [lib]
