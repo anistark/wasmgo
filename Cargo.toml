@@ -1,0 +1,49 @@
+[package]
+name = "chakra-go"
+version = "0.1.0"
+edition = "2021"
+authors = ["Kumar Anirudha <chakra@anirudha.dev>"]
+description = "Go WebAssembly plugin for Chakra - compile Go projects to WebAssembly using TinyGo"
+homepage = "https://github.com/anistark/chakra-go"
+repository = "https://github.com/anistark/chakra-go"
+license = "MIT"
+keywords = ["webassembly", "wasm", "go", "tinygo", "chakra"]
+categories = ["development-tools", "web-programming", "plugins"]
+readme = "README.md"
+
+[lib]
+name = "chakra_go"
+crate-type = ["cdylib", "rlib"]
+
+[[bin]]
+name = "chakra-go"
+required-features = ["cli"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
+thiserror = "1.0"
+clap = { version = "4.0", features = ["derive"], optional = true }
+
+[features]
+default = []
+cli = ["clap"]
+
+[dev-dependencies]
+tempfile = "3.0"
+
+# Chakra plugin configuration
+[package.metadata.chakra-plugin]
+name = "go"
+extensions = ["go"]
+entry_files = ["go.mod", "main.go", "cmd/main.go", "app.go"]
+
+[package.metadata.chakra-plugin.capabilities]
+compile_wasm = true
+compile_webapp = false
+live_reload = true
+optimization = true
+custom_targets = ["wasm"]
+
+[package.metadata.chakra-plugin.dependencies]
+tools = ["tinygo", "go"]
