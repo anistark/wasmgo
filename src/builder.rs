@@ -32,21 +32,21 @@ struct CargoPackage {
 
 #[derive(Debug, Deserialize)]
 struct PackageMetadata {
-    #[serde(rename = "chakra-plugin")]
-    chakra_plugin: ChakraPluginConfig,
+    #[serde(rename = "wasm-plugin")]
+    wasm_plugin: WasmPluginConfig,
 }
 
 #[derive(Debug, Deserialize)]
-struct ChakraPluginConfig {
+struct WasmPluginConfig {
     name: String,
     extensions: Vec<String>,
     entry_files: Vec<String>,
-    capabilities: ChakraPluginCapabilities,
-    dependencies: ChakraPluginDependencies,
+    capabilities: WasmPluginCapabilities,
+    dependencies: WasmPluginDependencies,
 }
 
 #[derive(Debug, Deserialize)]
-struct ChakraPluginCapabilities {
+struct WasmPluginCapabilities {
     compile_wasm: bool,
     compile_webapp: bool,
     live_reload: bool,
@@ -55,7 +55,7 @@ struct ChakraPluginCapabilities {
 }
 
 #[derive(Debug, Deserialize)]
-struct ChakraPluginDependencies {
+struct WasmPluginDependencies {
     tools: Vec<String>,
 }
 
@@ -66,7 +66,7 @@ pub struct GoPlugin {
 impl GoPlugin {
     pub fn new() -> Self {
         let plugin_info = Self::load_plugin_info()
-            .expect("Failed to load plugin configuration from Cargo.toml [package.metadata.chakra-plugin] section");
+            .expect("Failed to load plugin configuration from Cargo.toml [package.metadata.wasm-plugin] section");
 
         Self { plugin_info }
     }
@@ -86,11 +86,11 @@ impl GoPlugin {
     }
 
     fn create_plugin_info(cargo_config: CargoToml) -> PluginInfo {
-        let chakra_plugin = cargo_config
+        let wasm_plugin = cargo_config
             .package
             .metadata
-            .expect("Missing [package.metadata.chakra-plugin] section in Cargo.toml")
-            .chakra_plugin;
+            .expect("Missing [package.metadata.wasm-plugin] section in Cargo.toml")
+            .wasm_plugin;
 
         let author = cargo_config
             .package
@@ -105,21 +105,21 @@ impl GoPlugin {
         });
 
         PluginInfo {
-            name: chakra_plugin.name,
+            name: wasm_plugin.name,
             version: cargo_config.package.version,
             description: cargo_config.package.description,
             author,
-            extensions: chakra_plugin.extensions,
-            entry_files: chakra_plugin.entry_files,
+            extensions: wasm_plugin.extensions,
+            entry_files: wasm_plugin.entry_files,
             plugin_type: PluginType::External,
             source,
-            dependencies: chakra_plugin.dependencies.tools,
+            dependencies: wasm_plugin.dependencies.tools,
             capabilities: PluginCapabilities {
-                compile_wasm: chakra_plugin.capabilities.compile_wasm,
-                compile_webapp: chakra_plugin.capabilities.compile_webapp,
-                live_reload: chakra_plugin.capabilities.live_reload,
-                optimization: chakra_plugin.capabilities.optimization,
-                custom_targets: chakra_plugin.capabilities.custom_targets,
+                compile_wasm: wasm_plugin.capabilities.compile_wasm,
+                compile_webapp: wasm_plugin.capabilities.compile_webapp,
+                live_reload: wasm_plugin.capabilities.live_reload,
+                optimization: wasm_plugin.capabilities.optimization,
+                custom_targets: wasm_plugin.capabilities.custom_targets,
             },
         }
     }

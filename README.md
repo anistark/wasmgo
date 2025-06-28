@@ -1,22 +1,22 @@
-# Chakra-Go
+# Wasm Go
 
-🐹 Go WebAssembly plugin for [Chakra](https://github.com/anistark/chakra) - compile Go projects to WebAssembly using TinyGo.
+🐹 Go WebAssembly plugin for [Wasmrun](https://github.com/anistark/wasmrun) - compile Go projects to WebAssembly using TinyGo.
 
-[![Crates.io](https://img.shields.io/crates/v/chakra-go.svg)](https://crates.io/crates/chakra-go)
-[![Documentation](https://docs.rs/chakra-go/badge.svg)](https://docs.rs/chakra-go)
+[![Crates.io](https://img.shields.io/crates/v/wasmgo.svg)](https://crates.io/crates/wasmgo)
+[![Documentation](https://docs.rs/wasmgo/badge.svg)](https://docs.rs/wasmgo)
 
 ## Installation
 
-### As Chakra Plugin
+### As Wasm Plugin in Wasmrun
 ```sh
-chakra plugin install chakra-go
-chakra ./my-go-project
+wasmrun plugin install wasmgo
+wasmrun ./my-go-project
 ```
 
 ### Standalone CLI (Experimental)
 ```sh
-cargo install chakra-go --features cli
-chakra-go build ./my-go-project
+cargo install wasmgo --features cli
+wasmgo build ./my-go-project
 ```
 
 ## Requirements
@@ -26,45 +26,45 @@ chakra-go build ./my-go-project
 
 ## Usage
 
-### With Chakra
+### With Wasmrun
 ```sh
 # Run with live reload
-chakra ./my-go-project --watch
+wasmrun ./my-go-project --watch
 
 # Compile with optimization
-chakra compile ./my-go-project --optimization size
+wasmrun compile ./my-go-project --optimization size
 ```
 
 ### Standalone CLI (Only for Testing)
 ```sh
 # Check project compatibility
-chakra-go check ./my-go-project
+wasmgo check ./my-go-project
 
 # Build project
-chakra-go build ./my-go-project
+wasmgo build ./my-go-project
 
 # Check dependencies
-chakra-go deps --install
+wasmgo deps --install
 ```
 
 ## Plugin Configuration
 
-Plugin configuration is stored in `Cargo.toml` under the `[package.metadata.chakra-plugin]` section:
+Plugin configuration is stored in `Cargo.toml` under the `[package.metadata.wasm-plugin]` section:
 
 ```toml
-[package.metadata.chakra-plugin]
+[package.metadata.wasm-plugin]
 name = "go"
 extensions = ["go"]
 entry_files = ["go.mod", "main.go", "cmd/main.go", "app.go"]
 
-[package.metadata.chakra-plugin.capabilities]
+[package.metadata.wasm-plugin.capabilities]
 compile_wasm = true
 compile_webapp = false
 live_reload = true
 optimization = true
 custom_targets = ["wasm"]
 
-[package.metadata.chakra-plugin.dependencies]
+[package.metadata.wasm-plugin.dependencies]
 tools = ["tinygo", "go"]
 ```
 
@@ -107,7 +107,7 @@ func main() {
 }
 EOF
 
-chakra
+wasmrun
 ```
 
 ## Development
@@ -129,7 +129,7 @@ just install
 
 ## Plugin Architecture
 
-This plugin implements the Chakra plugin interface and reads its configuration from `Cargo.toml`. The configuration includes:
+This plugin implements the Wasm plugin interface and reads its configuration from `Cargo.toml`. The configuration includes:
 
 - **Extensions**: File extensions the plugin handles
 - **Entry Files**: Priority order for entry point detection

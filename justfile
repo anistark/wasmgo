@@ -1,4 +1,4 @@
-# chakra-go justfile
+# wasmgo justfile
 
 # Default
 default:
@@ -50,20 +50,20 @@ create-example NAME:
 
 # Test with example project
 test-example NAME: build-cli
-    ./target/debug/chakra-go check examples/{{NAME}}
+    ./target/debug/wasmgo check examples/{{NAME}}
 
 # Run plugin info command
 info: build-cli
-    ./target/debug/chakra-go info
+    ./target/debug/wasmgo info
 
 # Check dependencies
 deps: build-cli
-    ./target/debug/chakra-go deps
+    ./target/debug/wasmgo deps
 
-# Validate chakra-plugin configuration in Cargo.toml
+# Validate wasm-plugin configuration in Cargo.toml
 validate-config: build-cli
-    ./target/debug/chakra-go info
-    @echo "✅ Chakra plugin configuration is valid"
+    ./target/debug/wasmgo info
+    @echo "✅ Wasm plugin configuration is valid"
 
 # Package for release
 package: build

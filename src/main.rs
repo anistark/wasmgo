@@ -1,11 +1,11 @@
-use chakra_go::{BuildConfig, ChakraGoPlugin, OptimizationLevel, Plugin, TargetType};
 #[cfg(feature = "cli")]
 use clap::{Parser, Subcommand};
+use wasmgo::{BuildConfig, OptimizationLevel, Plugin, TargetType, WasmGoPlugin};
 
 #[cfg(feature = "cli")]
 #[derive(Parser)]
-#[command(name = "chakra-go")]
-#[command(about = "Go WebAssembly plugin for Chakra")]
+#[command(name = "wasmgo")]
+#[command(about = "Go WebAssembly plugin for Wasmrun")]
 #[command(version)]
 struct Cli {
     #[command(subcommand)]
@@ -38,7 +38,7 @@ enum Commands {
 #[cfg(feature = "cli")]
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let cli = Cli::parse();
-    let plugin = ChakraGoPlugin::new();
+    let plugin = WasmGoPlugin::new();
 
     match cli.command {
         Commands::Info => {
@@ -180,8 +180,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
         Commands::Config => {
             let plugin_info = plugin.info();
-            println!("🔧 Chakra-Go Plugin Configuration");
-            println!("Source: Cargo.toml [package.metadata.chakra-plugin]");
+            println!("🔧 Wasm Go Plugin Configuration");
+            println!("Source: Cargo.toml [package.metadata.wasm-plugin]");
             println!();
             println!("Plugin Name: {}", plugin_info.name);
             println!("Extensions: {}", plugin_info.extensions.join(", "));
@@ -207,7 +207,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 plugin_info.capabilities.custom_targets.join(", ")
             );
             println!();
-            println!("💡 To modify configuration, edit the [package.metadata.chakra-plugin] section in Cargo.toml");
+            println!("💡 To modify configuration, edit the [package.metadata.wasm-plugin] section in Cargo.toml");
         }
     }
 
@@ -216,14 +216,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 #[cfg(not(feature = "cli"))]
 fn main() {
-    println!("Chakra Go Plugin v{}", env!("CARGO_PKG_VERSION"));
-    println!("This plugin is designed to be used with the Chakra WebAssembly runtime.");
-    println!("Configuration is stored in Cargo.toml [package.metadata.chakra-plugin] section.");
+    println!("Wasmrun Go Plugin v{}", env!("CARGO_PKG_VERSION"));
+    println!("This plugin is designed to be used with the Wasmrun WebAssembly runtime.");
+    println!("Configuration is stored in Cargo.toml [package.metadata.wasm-plugin] section.");
     println!();
     println!("Install the CLI feature to use this binary standalone:");
-    println!("  cargo install chakra-go --features cli");
+    println!("  cargo install wasmgo --features cli");
     println!();
-    println!("Or use with Chakra:");
-    println!("  chakra plugin install chakra-go");
-    println!("  chakra run ./my-go-project");
+    println!("Or use with Wasmrun:");
+    println!("  wasmrun plugin install wasmgo");
+    println!("  wasmrun run ./my-go-project");
 }

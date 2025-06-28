@@ -1,22 +1,22 @@
 [package]
-name = "chakra-go"
-version = "0.1.0"
+name = "wasmgo"
+version = "0.2.0"
 edition = "2021"
-authors = ["Kumar Anirudha <chakra@anirudha.dev>"]
-description = "Go WebAssembly plugin for Chakra - compile Go projects to WebAssembly using TinyGo"
-homepage = "https://github.com/anistark/chakra-go"
-repository = "https://github.com/anistark/chakra-go"
+authors = ["Kumar Anirudha <wasm@anirudha.dev>"]
+description = "Go WebAssembly plugin for Wasmrun - compile Go projects to WebAssembly using TinyGo"
+homepage = "https://github.com/anistark/wasmgo"
+repository = "https://github.com/anistark/wasmgo"
 license = "MIT"
-keywords = ["webassembly", "wasm", "go", "tinygo", "chakra"]
+keywords = ["webassembly", "wasm", "go", "tinygo", "wasmrun"]
 categories = ["development-tools", "web-programming"]
 readme = "README.md"
 
 [lib]
-name = "chakra_go"
+name = "wasmgo"
 crate-type = ["cdylib", "rlib"]
 
 [[bin]]
-name = "chakra-go"
+name = "wasmgo"
 required-features = ["cli"]
 
 [dependencies]
@@ -32,18 +32,18 @@ cli = ["clap"]
 [dev-dependencies]
 tempfile = "3.0"
 
-# Chakra plugin configuration
-[package.metadata.chakra-plugin]
+# Wasm plugin configuration used by Wasmrun
+[package.metadata.wasm-plugin]
 name = "go"
 extensions = ["go"]
 entry_files = ["go.mod", "main.go", "cmd/main.go", "app.go"]
 
-[package.metadata.chakra-plugin.capabilities]
+[package.metadata.wasm-plugin.capabilities]
 compile_wasm = true
 compile_webapp = false
 live_reload = true
 optimization = true
 custom_targets = ["wasm"]
 
-[package.metadata.chakra-plugin.dependencies]
+[package.metadata.wasm-plugin.dependencies]
 tools = ["tinygo", "go"]

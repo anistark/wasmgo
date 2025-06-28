@@ -7,7 +7,7 @@ use thiserror::Error;
 mod builder;
 
 pub use builder::GoBuilder;
-pub use builder::GoPlugin as ChakraGoPlugin;
+pub use builder::GoPlugin as WasmGoPlugin;
 
 #[derive(Error, Debug)]
 pub enum PluginError {
@@ -246,12 +246,12 @@ impl PathResolver {
 
 #[allow(improper_ctypes_definitions)]
 #[no_mangle]
-pub extern "C" fn chakra_plugin_info() -> PluginInfo {
-    ChakraGoPlugin::new().info().clone()
+pub extern "C" fn wasm_plugin_info() -> PluginInfo {
+    WasmGoPlugin::new().info().clone()
 }
 
 #[allow(improper_ctypes_definitions)]
 #[no_mangle]
-pub extern "C" fn chakra_plugin_create() -> Box<dyn Plugin> {
-    Box::new(ChakraGoPlugin::new())
+pub extern "C" fn wasm_plugin_create() -> Box<dyn Plugin> {
+    Box::new(WasmGoPlugin::new())
 }
