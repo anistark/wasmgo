@@ -209,8 +209,8 @@ impl WasmBuilder for GoPlugin {
         for tool in &self.plugin_info.dependencies {
             if !CommandExecutor::is_tool_installed(tool) {
                 let install_hint = match tool.as_str() {
-                    "tinygo" => format!("{} (install from https://tinygo.org)", tool),
-                    "go" => format!("{} (Go compiler)", tool),
+                    "tinygo" => format!("{tool} (install from https://tinygo.org)"),
+                    "go" => format!("{tool} (Go compiler)"),
                     _ => tool.clone(),
                 };
                 missing_dependencies.push(install_hint);

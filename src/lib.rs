@@ -190,10 +190,7 @@ impl CommandExecutor {
         let source_path = Path::new(source_file_path);
         if !source_path.exists() {
             return Err(PluginError::CompilationFailed {
-                reason: format!(
-                    "{} build completed but output file was not found",
-                    language_name
-                ),
+                reason: format!("{language_name} build completed but output file was not found"),
             });
         }
 
@@ -221,12 +218,12 @@ impl PathResolver {
         let directory = Path::new(directory_path);
         if !directory.exists() {
             return Err(PluginError::InvalidProjectStructure {
-                reason: format!("Directory does not exist: {}", directory_path),
+                reason: format!("Directory does not exist: {directory_path}"),
             });
         }
         if !directory.is_dir() {
             return Err(PluginError::InvalidProjectStructure {
-                reason: format!("Path is not a directory: {}", directory_path),
+                reason: format!("Path is not a directory: {directory_path}"),
             });
         }
         Ok(())
