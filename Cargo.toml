@@ -1,6 +1,6 @@
 [package]
 name = "wasmgo"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 authors = ["Kumar Anirudha <wasm@anirudha.dev>"]
 description = "Go WebAssembly plugin for Wasmrun - compile Go projects to WebAssembly using TinyGo"
@@ -39,6 +39,7 @@ extensions = ["go"]
 entry_files = ["go.mod", "main.go", "cmd/main.go", "app.go"]
 
 [package.metadata.wasm-plugin.capabilities]
+supported_languages = ["go", "tinygo"]
 compile_wasm = true
 compile_webapp = false
 live_reload = true
