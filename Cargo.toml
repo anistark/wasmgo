@@ -1,6 +1,6 @@
 [package]
 name = "wasmgo"
-version = "0.3.3"
+version = "0.3.4"
 edition = "2021"
 authors = ["Kumar Anirudha <wasm@anirudha.dev>"]
 description = "Go WebAssembly plugin for Wasmrun - compile Go projects to WebAssembly using TinyGo"
