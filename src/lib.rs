@@ -135,7 +135,7 @@ impl CommandExecutor {
     pub fn is_tool_installed(tool_name: &str) -> bool {
         let version_arg = match tool_name {
             "tinygo" | "go" => "version",
-            _ => "--version"
+            _ => "--version",
         };
 
         Command::new(tool_name)
