@@ -77,10 +77,6 @@ impl GoPlugin {
     }
 
     fn read_cargo_toml() -> Result<CargoToml, Box<dyn std::error::Error>> {
-        if let Ok(content) = fs::read_to_string("Cargo.toml") {
-            return Ok(toml::from_str(&content)?);
-        }
-
         let embedded_content = include_str!("../Cargo.toml");
         Ok(toml::from_str(embedded_content)?)
     }
