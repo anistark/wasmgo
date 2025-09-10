@@ -1,5 +1,5 @@
 use crate::{
-    BuildConfig, BuildResult, CommandExecutor, PathResolver, Plugin, PluginCapabilities,
+    CommandExecutor, CompileConfig, CompileResult, PathResolver, Plugin, PluginCapabilities,
     PluginInfo, PluginResult, PluginSource, PluginType, WasmBuilder,
 };
 use serde::Deserialize;
@@ -226,16 +226,16 @@ impl WasmBuilder for GoPlugin {
         Ok(())
     }
 
-    fn build(&self, build_configuration: &BuildConfig) -> PluginResult<BuildResult> {
+    fn compile(&self, compile_configuration: &CompileConfig) -> PluginResult<CompileResult> {
         if !CommandExecutor::is_tool_installed("tinygo") {
-            return Err(crate::PluginError::BuildToolNotFound {
+            return Err(crate::PluginError::CompileToolNotFound {
                 tool: "tinygo".to_string(),
             });
         }
 
-        let entry_file_path = self.find_entry_file(&build_configuration.project_path)?;
+        let entry_file_path = self.find_entry_file(&compile_configuration.project_path)?;
 
-        PathResolver::ensure_output_directory_exists(&build_configuration.output_directory)?;
+        PathResolver::ensure_output_directory_exists(&compile_configuration.output_directory)?;
 
         let output_filename = entry_file_path
             .file_stem()
@@ -244,11 +244,11 @@ impl WasmBuilder for GoPlugin {
             .to_string()
             + ".wasm";
 
-        println!("🔨 Building with TinyGo...");
+        println!("🔨 Compiling with TinyGo...");
 
-        let output_path = Path::new(&build_configuration.output_directory).join(&output_filename);
+        let output_path = Path::new(&compile_configuration.output_directory).join(&output_filename);
 
-        let build_command_output = CommandExecutor::execute_command(
+        let compile_command_output = CommandExecutor::execute_command(
             "tinygo",
             &[
                 "build",
@@ -257,26 +257,26 @@ impl WasmBuilder for GoPlugin {
                 "-target=wasm",
                 ".",
             ],
-            &build_configuration.project_path,
-            build_configuration.verbose,
+            &compile_configuration.project_path,
+            compile_configuration.verbose,
         )?;
 
-        if !build_command_output.status.success() {
+        if !compile_command_output.status.success() {
             return Err(crate::PluginError::CompilationFailed {
                 reason: format!(
-                    "Build failed: {}",
-                    String::from_utf8_lossy(&build_command_output.stderr)
+                    "Compilation failed: {}",
+                    String::from_utf8_lossy(&compile_command_output.stderr)
                 ),
             });
         }
 
         if !output_path.exists() {
             return Err(crate::PluginError::CompilationFailed {
-                reason: "TinyGo build completed but WASM file was not created".to_string(),
+                reason: "TinyGo compilation completed but WASM file was not created".to_string(),
             });
         }
 
-        Ok(BuildResult {
+        Ok(CompileResult {
             wasm_file_path: output_path.to_string_lossy().to_string(),
             js_file_path: None,
             additional_files: vec![],

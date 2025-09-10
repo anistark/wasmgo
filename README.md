@@ -16,7 +16,7 @@ wasmrun ./my-go-project
 ### Standalone CLI (Experimental)
 ```sh
 cargo install wasmgo --features cli
-wasmgo build ./my-go-project
+wasmgo compile ./my-go-project
 ```
 
 ## Requirements
@@ -40,8 +40,8 @@ wasmrun compile ./my-go-project --optimization size
 # Check project compatibility
 wasmgo check ./my-go-project
 
-# Build project
-wasmgo build ./my-go-project
+# Compile project
+wasmgo compile ./my-go-project
 
 # Check dependencies
 wasmgo deps --install

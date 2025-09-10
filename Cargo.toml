@@ -1,6 +1,6 @@
 [package]
 name = "wasmgo"
-version = "0.2.1"
+version = "0.3.0"
 edition = "2021"
 authors = ["Kumar Anirudha <wasm@anirudha.dev>"]
 description = "Go WebAssembly plugin for Wasmrun - compile Go projects to WebAssembly using TinyGo"
@@ -21,9 +21,9 @@ required-features = ["cli"]
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.8"
+toml = "0.9.5"
 thiserror = "1.0"
-clap = { version = "4.0", features = ["derive"], optional = true }
+clap = { version = "4.5.47", features = ["derive"], optional = true }
 
 [features]
 default = []

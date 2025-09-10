@@ -14,8 +14,8 @@ pub enum PluginError {
     #[error("Compilation failed: {reason}")]
     CompilationFailed { reason: String },
 
-    #[error("Build tool not found: {tool}")]
-    BuildToolNotFound { tool: String },
+    #[error("Compile tool not found: {tool}")]
+    CompileToolNotFound { tool: String },
 
     #[error("Invalid project structure: {reason}")]
     InvalidProjectStructure { reason: String },
@@ -90,7 +90,7 @@ pub trait Plugin: Send + Sync {
 }
 
 #[derive(Debug, Clone)]
-pub struct BuildConfig {
+pub struct CompileConfig {
     pub project_path: String,
     pub output_directory: String,
     pub verbose: bool,
@@ -99,7 +99,7 @@ pub struct BuildConfig {
 }
 
 #[derive(Debug, Clone)]
-pub struct BuildResult {
+pub struct CompileResult {
     pub wasm_file_path: String,
     pub js_file_path: Option<String>,
     pub additional_files: Vec<String>,
@@ -117,6 +117,7 @@ pub enum OptimizationLevel {
 pub enum TargetType {
     Standard,
     Web,
+    WebApp,
 }
 
 pub trait WasmBuilder: Send + Sync {
@@ -125,7 +126,7 @@ pub trait WasmBuilder: Send + Sync {
     fn supported_extensions(&self) -> &[&str];
     fn check_dependencies(&self) -> Vec<String>;
     fn validate_project(&self, project_path: &str) -> PluginResult<()>;
-    fn build(&self, config: &BuildConfig) -> PluginResult<BuildResult>;
+    fn compile(&self, config: &CompileConfig) -> PluginResult<CompileResult>;
 }
 
 pub struct CommandExecutor;
@@ -190,7 +191,9 @@ impl CommandExecutor {
         let source_path = Path::new(source_file_path);
         if !source_path.exists() {
             return Err(PluginError::CompilationFailed {
-                reason: format!("{language_name} build completed but output file was not found"),
+                reason: format!(
+                    "{language_name} compilation completed but output file was not found"
+                ),
             });
         }
 
