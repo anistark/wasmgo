@@ -250,14 +250,15 @@ impl WasmBuilder for GoPlugin {
             .unwrap_or_default()
             .to_string_lossy()
             .to_string();
-        let output_filename = format!("{}.wasm", project_name);
+        let output_filename = format!("{project_name}.wasm");
 
         println!("🔨 Compiling with TinyGo...");
 
         let output_path = Path::new(&output_dir).join(&output_filename);
 
         // For TinyGo command, use relative path from project directory
-        let tinygo_output_path = if Path::new(&compile_configuration.output_directory).is_absolute() {
+        let tinygo_output_path = if Path::new(&compile_configuration.output_directory).is_absolute()
+        {
             output_path.to_string_lossy().to_string()
         } else {
             Path::new(&compile_configuration.output_directory)
@@ -268,13 +269,7 @@ impl WasmBuilder for GoPlugin {
 
         let compile_command_output = CommandExecutor::execute_command(
             "tinygo",
-            &[
-                "build",
-                "-o",
-                &tinygo_output_path,
-                "-target=wasm",
-                ".",
-            ],
+            &["build", "-o", &tinygo_output_path, "-target=wasm", "."],
             &compile_configuration.project_path,
             compile_configuration.verbose,
         )?;
@@ -300,12 +295,14 @@ impl WasmBuilder for GoPlugin {
                 let wasm_files: Vec<_> = entries
                     .filter_map(|entry| entry.ok())
                     .filter(|entry| {
-                        entry.path().extension()
+                        entry
+                            .path()
+                            .extension()
                             .map(|ext| ext.to_string_lossy().to_lowercase() == "wasm")
                             .unwrap_or(false)
                     })
                     .collect();
-                
+
                 if let Some(wasm_file) = wasm_files.first() {
                     wasm_file.path()
                 } else {
@@ -315,7 +312,8 @@ impl WasmBuilder for GoPlugin {
                 }
             } else {
                 return Err(crate::PluginError::CompilationFailed {
-                    reason: "TinyGo compilation completed but output directory could not be read".to_string(),
+                    reason: "TinyGo compilation completed but output directory could not be read"
+                        .to_string(),
                 });
             }
         };
