@@ -229,27 +229,49 @@ impl WasmBuilder for GoPlugin {
             });
         }
 
-        let entry_file_path = self.find_entry_file(&compile_configuration.project_path)?;
+        let _entry_file_path = self.find_entry_file(&compile_configuration.project_path)?;
 
-        PathResolver::ensure_output_directory_exists(&compile_configuration.output_directory)?;
+        // Resolve output directory relative to project path, not current working directory
+        let output_dir = if Path::new(&compile_configuration.output_directory).is_absolute() {
+            compile_configuration.output_directory.clone()
+        } else {
+            Path::new(&compile_configuration.project_path)
+                .join(&compile_configuration.output_directory)
+                .to_string_lossy()
+                .to_string()
+        };
 
-        let output_filename = entry_file_path
-            .file_stem()
-            .unwrap()
+        PathResolver::ensure_output_directory_exists(&output_dir)?;
+
+        // Use a predictable output filename instead of relying on entry file name
+        // TinyGo with directory input uses the directory name, not the entry file name
+        let project_name = Path::new(&compile_configuration.project_path)
+            .file_name()
+            .unwrap_or_default()
             .to_string_lossy()
-            .to_string()
-            + ".wasm";
+            .to_string();
+        let output_filename = format!("{}.wasm", project_name);
 
         println!("🔨 Compiling with TinyGo...");
 
-        let output_path = Path::new(&compile_configuration.output_directory).join(&output_filename);
+        let output_path = Path::new(&output_dir).join(&output_filename);
+
+        // For TinyGo command, use relative path from project directory
+        let tinygo_output_path = if Path::new(&compile_configuration.output_directory).is_absolute() {
+            output_path.to_string_lossy().to_string()
+        } else {
+            Path::new(&compile_configuration.output_directory)
+                .join(&output_filename)
+                .to_string_lossy()
+                .to_string()
+        };
 
         let compile_command_output = CommandExecutor::execute_command(
             "tinygo",
             &[
                 "build",
                 "-o",
-                &output_path.to_string_lossy(),
+                &tinygo_output_path,
                 "-target=wasm",
                 ".",
             ],
@@ -266,14 +288,40 @@ impl WasmBuilder for GoPlugin {
             });
         }
 
-        if !output_path.exists() {
-            return Err(crate::PluginError::CompilationFailed {
-                reason: "TinyGo compilation completed but WASM file was not created".to_string(),
-            });
-        }
+        let actual_wasm_file = if output_path.exists() {
+            output_path
+        } else {
+            let search_dir = Path::new(&output_dir);
+            if compile_configuration.verbose {
+                println!("Looking for WASM files in: {}", search_dir.display());
+                println!("Expected file was: {}", output_path.display());
+            }
+            if let Ok(entries) = std::fs::read_dir(search_dir) {
+                let wasm_files: Vec<_> = entries
+                    .filter_map(|entry| entry.ok())
+                    .filter(|entry| {
+                        entry.path().extension()
+                            .map(|ext| ext.to_string_lossy().to_lowercase() == "wasm")
+                            .unwrap_or(false)
+                    })
+                    .collect();
+                
+                if let Some(wasm_file) = wasm_files.first() {
+                    wasm_file.path()
+                } else {
+                    return Err(crate::PluginError::CompilationFailed {
+                        reason: "TinyGo compilation completed but no WASM file was found in output directory".to_string(),
+                    });
+                }
+            } else {
+                return Err(crate::PluginError::CompilationFailed {
+                    reason: "TinyGo compilation completed but output directory could not be read".to_string(),
+                });
+            }
+        };
 
         Ok(CompileResult {
-            wasm_file_path: output_path.to_string_lossy().to_string(),
+            wasm_file_path: actual_wasm_file.to_string_lossy().to_string(),
             js_file_path: None,
             additional_files: vec![],
             is_wasm_bindgen: false,
