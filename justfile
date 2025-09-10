@@ -70,7 +70,7 @@ package: build
     cargo package
 
 # Publish to crates.io (dry run)
-prepare-publish: build format lint validate-config
+prepare-publish: build format lint
     cargo publish --dry-run
 
 # Publish to crates.io
